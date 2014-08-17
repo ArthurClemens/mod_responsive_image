@@ -1,0 +1,12 @@
+[
+    {
+        responsive_image,
+        ["responsive_image"],
+        controller_api,
+        [
+            {module, "responsive_image"},
+            {method, "get_url"}
+        ]
+    }
+].
+
