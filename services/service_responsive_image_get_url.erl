@@ -28,10 +28,23 @@ process_json_data(Json, Context) ->
         ok ->     
             MediaId = z_convert:to_integer(proplists:get_value(<<"media_id">>, Data)),
             PropKeys = [
-                <<"width">>,
+                % integers
                 <<"height">>,
+                <<"quality">>,
+                <<"width">>,
+                % strings
+                <<"background">>,
+                <<"blur">>,
                 <<"mediaclass">>,
-                <<"crop">>
+                % booleans
+                <<"crop">>,
+                <<"extent">>,
+                <<"flip">>,
+                <<"flop">>,
+                <<"grey">>,
+                <<"mono">>,
+                <<"lossless">>,
+                <<"use_absolute_url">>
             ],
             Props = lists:foldl(fun(Key, Acc) ->
                 [add_property(Key, Data)|Acc]
@@ -50,26 +63,37 @@ check_required(Data) ->
         true -> ok;
         false -> {error, "Required attribute 'media_id' or 'width' missing"}
     end.
-
-add_property(Key, Data) when Key =:= <<"width">> ->
+% integers
+add_property(Key, Data) when
+    Key =:= <<"height">>;
+    Key =:= <<"quality">>;
+    Key =:= <<"width">> ->
     case proplists:get_value(Key, Data) of
         undefined -> [];
-        Value -> {width, z_convert:to_integer(Value)}
+        Value -> {z_convert:to_atom(Key), z_convert:to_integer(Value)}
     end;
-add_property(Key, Data) when Key =:= <<"height">> ->
+% strings
+add_property(Key, Data) when
+    Key =:= <<"background">>;
+    Key =:= <<"blur">>;
+    Key =:= <<"mediaclass">> ->
     case proplists:get_value(Key, Data) of
         undefined -> [];
-        Value -> {height, z_convert:to_integer(Value)}
+        Value -> {z_convert:to_atom(Key), Value}
     end;
-add_property(Key, Data) when Key =:= <<"mediaclass">> ->
+% booleans
+add_property(Key, Data) when 
+    Key =:= <<"crop">>;
+    Key =:= <<"extent">>;
+    Key =:= <<"flip">>;
+    Key =:= <<"flop">>;
+    Key =:= <<"grey">>;
+    Key =:= <<"lossless">>;
+    Key =:= <<"mono">>;
+    Key =:= <<"use_absolute_url">> ->
     case proplists:get_value(Key, Data) of
         undefined -> [];
-        Value -> {mediaclass, Value}
-    end;
-add_property(Key, Data) when Key =:= <<"crop">> ->
-    case proplists:get_value(Key, Data) of
-        undefined -> [];
-        Value -> {crop, z_convert:to_bool(Value)}
+        Value -> {z_convert:to_atom(Key), z_convert:to_bool(Value)}
     end;
 add_property(_Key, _Data) -> [].
     

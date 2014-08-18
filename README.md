@@ -58,6 +58,18 @@ And then:
 
 Set this attribute to a true value to activate the image crop center (set in the edit page).
 
+### Other image attributes
+
+* background
+* extent
+* blur
+* flip
+* flop
+* grey
+* lossless
+* mono
+* quality
+* use_absolute_url
 
 ## Complete example
 
@@ -66,7 +78,7 @@ Set this attribute to a true value to activate the image crop center (set in the
     {% with id.o.depiction.id as media_id %}
         {% if media_id %}
             <div class="main-image">
-                <img data-media_id="{{ media_id }}" data-mediaclass="article" data-crop="1" data-ratio="3.2" data-range="320-1280" />
+                <img data-media_id="{{ media_id }}" data-mediaclass="article" data-crop="1" data-ratio="3.2" data-range="320-1280" data-use_absolute_url="1" data-blur="12x20" />
             </div>
         {% endif %}
     {% endwith %}
