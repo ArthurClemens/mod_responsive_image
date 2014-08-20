@@ -21,6 +21,8 @@ In a template where the image should be responsive:
 
 See [Fetch Responsive Image jQuery plugin](https://github.com/ArthurClemens/jquery-fetch-responsive-plugin) for extensive documentation of the jQuery plugin.
 
+Note that when a high resolution image is requested, Zotonic image attribute `upscale` is set to true.
+
 
 ### Zotonic specific parameters
 
@@ -69,6 +71,7 @@ Set this attribute to a true value to activate the image crop center (set in the
 * lossless
 * mono
 * quality
+* upscale
 * use_absolute_url
 
 ## Complete example
@@ -78,7 +81,7 @@ Set this attribute to a true value to activate the image crop center (set in the
     {% with id.o.depiction.id as media_id %}
         {% if media_id %}
             <div class="main-image">
-                <img data-media_id="{{ media_id }}" data-mediaclass="article" data-crop="1" data-ratio="3.2" data-range="320-1280" data-use_absolute_url="1" data-blur="12x20" />
+                <img data-media_id="{{ media_id }}" data-mediaclass="article" data-crop="1" data-high-resolution="auto" data-high-resolution-maximum="1200"  data-ratio="3.2" data-range="320-1280" data-use_absolute_url="1" data-blur="12x20" />
             </div>
         {% endif %}
     {% endwith %}

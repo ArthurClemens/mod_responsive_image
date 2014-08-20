@@ -27,6 +27,8 @@ process_json_data(Json, Context) ->
         {error, E} -> {error, E};
         ok ->     
             MediaId = z_convert:to_integer(proplists:get_value(<<"media_id">>, Data)),
+            HighResolution = z_convert:to_bool(proplists:get_value(<<"highResolution">>, Data, false)),
+            
             PropKeys = [
                 % integers
                 <<"height">>,
@@ -44,13 +46,25 @@ process_json_data(Json, Context) ->
                 <<"grey">>,
                 <<"mono">>,
                 <<"lossless">>,
+                <<"upscale">>,
                 <<"use_absolute_url">>
             ],
             Props = lists:foldl(fun(Key, Acc) ->
                 [add_property(Key, Data)|Acc]
             end, [], PropKeys),
             Props1 = lists:filter(fun(P) -> P =/= [] end, Props),
-            ImageUrl = case z_media_tag:url(MediaId, Props1, Context) of
+            Props2 = case HighResolution of 
+                false -> Props1;
+                true ->
+                    Width = proplists:get_value(width, Props1),
+                    Height = proplists:get_value(height, Props1),
+                    [
+                        {width, Width * 2},
+                        {height, Height * 2},
+                        {upscale, true}
+                        | proplists:delete(height, proplists:delete(width, Props1))]
+            end,
+            ImageUrl = case z_media_tag:url(MediaId, Props2, Context) of
                 {ok, Url} -> Url;
                 {error, _} -> undefined
             end,
