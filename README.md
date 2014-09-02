@@ -97,5 +97,5 @@ Set this attribute to a true value to activate the image crop center (set in the
 
 * Download and activate this module in Admin > System > Modules.
 * Download [Fetch Responsive Image jQuery plugin](https://github.com/ArthurClemens/jquery-fetch-responsive-plugin).
-* Place `jquery.fetch-responsive.min.js` in a lib folder.
-* Link the filename in a template where images are loaded, preferably base.tpl.
+* Place Javascript file `jquery.fetch-responsive.min.js` in a lib folder.
+* Link the Javascript file in a template where images are loaded, or in base.tpl.
