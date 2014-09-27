@@ -86,7 +86,7 @@ Set this attribute to a true value to activate the image crop center (set in the
         {% endif %}
     {% endwith %}
     
-### Template
+### Javascript
 
     $.responsive({
         urlSource: "/responsive_image"
