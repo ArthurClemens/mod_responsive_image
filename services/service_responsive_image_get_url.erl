@@ -25,8 +25,12 @@ process_json_data(Json, Context) ->
     
     case check_required(Data) of
         {error, E} -> {error, E};
-        ok ->     
-            MediaId = z_convert:to_integer(proplists:get_value(<<"media_id">>, Data)),
+        ok ->
+            MediaValue = proplists:get_value(<<"media_id">>, Data),
+            MediaId = case string:to_integer(MediaValue) of
+                {error, _Reason} -> MediaValue;            
+                {IntegerValue, _Rest} -> IntegerValue
+            end,
             HighResolution = z_convert:to_bool(proplists:get_value(<<"highResolution">>, Data, false)),
             
             PropKeys = [
