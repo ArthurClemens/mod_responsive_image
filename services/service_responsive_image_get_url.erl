@@ -22,7 +22,6 @@ process_get(_ReqData, Context) ->
         
 process_json_data(Json, Context) ->
     {struct, Data} = mochijson2:decode(Json),
-    
     case check_required(Data) of
         {error, E} -> {error, E};
         ok ->
@@ -54,7 +53,7 @@ process_json_data(Json, Context) ->
                 <<"use_absolute_url">>
             ],
             Props = lists:foldl(fun(Key, Acc) ->
-                [add_property(Key, Data)|Acc]
+                [add_property(MediaId, Key, Data, Context)|Acc]
             end, [], PropKeys),
             Props1 = lists:filter(fun(P) -> P =/= [] end, Props),
             Props2 = case HighResolution of 
@@ -81,8 +80,9 @@ check_required(Data) ->
         true -> ok;
         false -> {error, "Required attribute 'media_id' or 'width' missing"}
     end.
+
 % integers
-add_property(Key, Data) when
+add_property(_Id, Key, Data, _Context) when
     Key =:= <<"height">>;
     Key =:= <<"quality">>;
     Key =:= <<"width">> ->
@@ -90,8 +90,9 @@ add_property(Key, Data) when
         undefined -> [];
         Value -> {z_convert:to_atom(Key), z_convert:to_integer(Value)}
     end;
+
 % strings
-add_property(Key, Data) when
+add_property(_Id, Key, Data, _Context) when
     Key =:= <<"background">>;
     Key =:= <<"blur">>;
     Key =:= <<"mediaclass">> ->
@@ -99,9 +100,9 @@ add_property(Key, Data) when
         undefined -> [];
         Value -> {z_convert:to_atom(Key), Value}
     end;
+
 % booleans
-add_property(Key, Data) when 
-    Key =:= <<"crop">>;
+add_property(_Id, Key, Data, _Context) when 
     Key =:= <<"extent">>;
     Key =:= <<"flip">>;
     Key =:= <<"flop">>;
@@ -113,5 +114,23 @@ add_property(Key, Data) when
         undefined -> [];
         Value -> {z_convert:to_atom(Key), z_convert:to_bool(Value)}
     end;
-add_property(_Key, _Data) -> [].
+
+% conditional
+add_property(Id, Key, Data, Context) when 
+    Key =:= <<"crop">> ->
+    KeyAtom = z_convert:to_atom(Key),
+    case proplists:get_value(Key, Data) of
+        undefined -> [];
+        1 -> {KeyAtom, true};
+        0 -> [];
+        <<"auto">> ->
+            case m_rsc:p(Id, crop_center, Context) of
+                undefined -> {KeyAtom, false};
+                <<>> -> {KeyAtom, false};
+                _ -> {KeyAtom, true}
+            end;
+        Value -> {KeyAtom, Value}
+    end;
+
+add_property(_Id, _Key, _Data, _Context) -> [].
     

@@ -58,7 +58,22 @@ And then:
 
 ### crop
 
-Set this attribute to a true value to activate the image crop center (set in the edit page).
+Set this attribute to a true value to activate cropping. Possible values:
+
+* 0/false: no cropping
+* 1/true: crops using default crop (center)
+* "auto": crops using the crop center (if any is set, otherwise no cropping)
+* any cropping value (north, north_east, east, south_east, south, south_west, west, north_west and center)
+
+Example:
+
+    <img data-media_id="{{ media_id }}" data-crop="auto" />
+
+or:
+
+    $("img").responsive({
+        crop: "auto"
+    });
 
 ### Other image attributes
 
